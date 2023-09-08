@@ -55,13 +55,30 @@ class Producer:
 
     def create_topic(self):
         """Creates the producer topic if it does not already exist"""
-        #
-        #
-        # TODO: Write code that creates the topic for this producer if it does not already exist on
-        # the Kafka Broker.
-        #
-        #
-        logger.info("topic creation kafka integration incomplete - skipping")
+        
+        # creating an admin client 
+        admin_client = AdminClient({"bootstrap.servers": self.broker_properties["bootstrap.servers"]})
+
+        # defining the new topic with name, partitions, and replicas
+        new_topic = NewTopic(
+            topic=self.topic_name,
+            num_partitions=self.num_partitions,
+            replication_factor=self.num_replicas
+        )
+
+        # obtaining a list of topics
+        all_topics = admin_client.list_topics(self.topic_name)
+        
+        # checking if topic already exists
+        if self.topic_name not in all_topics.topics:
+            admin_client.create_topics([new_topic])
+
+            # creating topic if not exists
+            logger.info(f"Created topics: {self.topic_name}")
+        else:
+            logger.info(f"Topic '{self.topic_name}' already exists")
+
+        admin_client.close()
 
     def time_millis(self):
         return int(round(time.time() * 1000))
