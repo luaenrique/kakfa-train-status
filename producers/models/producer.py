@@ -35,7 +35,7 @@ class Producer:
         self.num_partitions = num_partitions
         self.num_replicas = num_replicas
 
-        # Step 1: Adding broker URL and schema registry URL to the broker properties
+        # Adding broker URL and schema registry URL to the broker properties
         self.broker_properties = {
             "bootstrap.servers": broker_url,
             "schema.registry.url": schema_url
@@ -46,9 +46,12 @@ class Producer:
             self.create_topic()
             Producer.existing_topics.add(self.topic_name)
 
-        # TODO: Configure the AvroProducer
-        # self.producer = AvroProducer(
-        # )
+        # Configuring a producer using the broker and schema properties
+        self.producer = AvroProducer(
+            self.broker_properties,
+            default_key_schema = key_schema,
+            default_value_schema = value_schema
+        )
 
     def create_topic(self):
         """Creates the producer topic if it does not already exist"""
