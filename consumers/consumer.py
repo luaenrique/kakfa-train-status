@@ -36,7 +36,7 @@ class KafkaConsumer:
 
         self.broker_properties = {
             'bootstrap.servers': broker_url,
-            'default.topic.config': {'auto.offset.reset': 'earliest'},
+            'default.topic.config': {'auto.offset.reset': 'earliest' if self.offset_earliest else 'latest'},
             'group.id': topic_name_pattern 
         }
 
@@ -74,10 +74,12 @@ class KafkaConsumer:
             if message is not None:
                 if message.error() is not None:
                     self.message_handler(message)
+                    logger.info(f"Consumer message key: {message}")
                     return 1
                 else:
+                    self.message_handler(message)
                     logger.error(message.error())
-                    return 0
+                    return 1
             else:
                 logger.debug("no message received")
                 return 0
