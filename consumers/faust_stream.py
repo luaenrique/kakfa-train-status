@@ -31,7 +31,8 @@ class TransformedStation(faust.Record):
 
 #   places it into a new topic with only the necessary information.
 app = faust.App("stations-stream", broker="kafka://localhost:9092", store="memory://")
-topic = app.topic("stations_conn", value_type=Station)
+# I have used lines.py as a base to define it
+topic = app.topic("org.chicago.cta.station", value_type=Station)
 out_topic = app.topic("faust_stations_conn_table", partitions=1)
 table = app.Table(
     "faust_stations_conn_table",
