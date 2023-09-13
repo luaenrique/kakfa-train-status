@@ -73,9 +73,8 @@ class KafkaConsumer:
             message = self.consumer.poll(timeout=1.0)
             if message is not None:
                 if message.error() is not None:
-                    self.message_handler(message)
                     logger.info(f"Consumer message key: {message}")
-                    return 1
+                    return 0
                 else:
                     self.message_handler(message)
                     logger.error(message.error())
